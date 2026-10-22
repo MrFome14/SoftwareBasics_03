@@ -1,26 +1,44 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
+	console.log('Initialising TODO extension.');
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "helloworld" is now active!');
+	const disposable = vscode.commands.registerCommand('todoNavigator.findTasks', async () => {
+		const editor = vscode.window.activeTextEditor;
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	const disposable = vscode.commands.registerCommand('helloworld.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from HelloWorld!');
+		if (!editor) {
+			vscode.window.showInformationMessage('No editor opened');
+			return;
+		}
+
+		const document = editor.document;
+		const selected = editor.selection;
+
+		if (selected.isEmpty) {
+			vscode.window.showInformationMessage('Nothing selected');
+			return;
+		}
+
+		const text = document.getText(selected);
+		const styledText = text.split('\n').map(line => "    " + line).join('\n');
+
+		// console.log(text);
+
+		const wrappedText = `try {\n${styledText}\n} catch (error) {\n    console.error(error);\n}`
+
+		const success = await editor.edit((editBuilder) => {
+			editBuilder.replace(selected, wrappedText);
+		});
+
+		if (!success) {
+			vscode.window.showInformationMessage('Something went wrong. Try again');
+			return;
+		}
+
 	});
 
 	context.subscriptions.push(disposable);
 }
 
-// This method is called when your extension is deactivated
-export function deactivate() {}
+
+export function deactivate() { }

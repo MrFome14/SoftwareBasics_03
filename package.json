@@ -14,8 +14,8 @@
   "contributes": {
     "commands": [
       {
-        "command": "helloworld.helloWorld",
-        "title": "Hello World"
+        "command": "todoNavigator.findTasks",
+        "title": "TODO Navigator: Find Tasks"
       }
     ]
   },
