@@ -1,71 +1,59 @@
-# helloworld README
+# TryCatch Helper -- лабораторная работа №3
 
-This is the README for your extension "helloworld". After writing up a brief description, we recommend including the following sections.
+*_исполнитель_*: Фоменко Фёдор Иванович
 
-## Features
+*_группа_*: M3105
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+## 1. Техническое задание
 
-For example if there is an image subfolder under your extension project workspace:
+- Разработать расширение для Visual Studio Code.
+- Подготовить отчет:
+  - кратко описать структуру IDE в разрезе подключения к ней сторонних функциональных возможностей
+  - разместить исходный код на GitHub 
+  - написать README 
+- Составить документацию кода
 
-\!\[feature X\]\(images/feature-x.png\)
+## 2. Разработка
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+Расширение разработано на TypeScript с использованием API Visual Studio Code.
 
-## Requirements
+Основная логика реализована в команде `tryCatchHelper.wrapSelection`. При её вызове расширение получает активный редактор и выделенный диапазон, формирует новую конструкцию `try/catch` и заменяет исходный фрагмент кода.
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+**Отступы определяются на основе настроек редактора:** используются табуляции либо заданное количество пробелов. После успешной замены создаются два выделения, позволяющие одновременно редактировать вхождения `error` в блоке `catch`.
 
-## Extension Settings
+Если редактор отсутствует, выделение пустое или операция редактирования не выполнена, расширение сообщает об этом пользователю.
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+## 3. Архитектура расширения
 
-For example:
+Расширение использует механизм регистрации команд VS Code. При активации регистрируется команда `tryCatchHelper.wrapSelection`, обработчик которой выполняет основную логику.
 
-This extension contributes the following settings:
+Последовательность работы:
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+```mermaid
+flowchart TD
+    A[Активация расширения] --> B[Регистрация команды]
+    B --> C[Вызов команды]
+    C --> D{Активный редактор существует?}
+    D -- Нет --> E[Уведомление]
+    D -- Да --> F{Есть выделение?}
+    F -- Нет --> G[Уведомление]
+    F -- Да --> H[Получение кода и настроек отступов]
+    H --> I[Формирование try/catch]
+    I --> J[Замена выделенного фрагмента]
+    J --> K{Редактирование успешно?}
+    K -- Нет --> L[Уведомление об ошибке]
+    K -- Да --> M[Выделение вхождений error]
+```
 
-## Known Issues
+Для взаимодействия с редактором используются объекты `TextEditor`, `TextDocument`, `Selection` и метод `editor.edit()`. Команда и её горячая клавиша объявляются в `package.json`.
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+## 4. Ограничения
 
-## Release Notes
+Текущая версия ориентирована на синтаксис `try/catch`, используемый в JavaScript и TypeScript. Формирование конструкции для других языков программирования не реализовано. Корректность обработки исключений и совместимость с конкретным фрагментом кода зависят от исходного кода и контекста его использования.
 
-Users appreciate release notes as you update your extension.
+## 5. Технологии
 
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+- TypeScript
+- Visual Studio Code Extension API
+- Node.js и npm
+- Mermaid для красивенькой блоксхемы
