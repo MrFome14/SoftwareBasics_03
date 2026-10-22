@@ -3,9 +3,9 @@ import * as vscode from 'vscode';
 export function activate(context: vscode.ExtensionContext) {
 	console.log('Initialising TODO extension.');
 
-	const disposable = vscode.commands.registerCommand('todoNavigator.findTasks', async () => {
+	const disposable = vscode.commands.registerCommand('tryCatchHelper.wrapSelection', async () => {
 		const editor = vscode.window.activeTextEditor;
-		// const file = editor.
+
 		if (!editor) {
 			vscode.window.showInformationMessage('No editor opened');
 			return;
@@ -33,9 +33,12 @@ export function activate(context: vscode.ExtensionContext) {
 
 
 		let indent = "\t";
+		let tabSize = 4;
 		if (editor.options.insertSpaces) {
 			const rawTabSize = editor.options.tabSize;
-			const tabSize = parseInt(rawTabSize as string, 10) || 4;
+			if (typeof rawTabSize == "number") {
+				tabSize = rawTabSize;
+			}
 			indent = ' '.repeat(tabSize);
 		}
 
@@ -49,7 +52,7 @@ export function activate(context: vscode.ExtensionContext) {
 			});
 
 			if (!success) {
-				vscode.window.showInformationMessage('Unable to do that bruh.');
+				vscode.window.showInformationMessage('Unable to wrap the selected code.');
 				return;
 			}
 		} catch (error) {
@@ -57,6 +60,23 @@ export function activate(context: vscode.ExtensionContext) {
 			console.log(error);
 			return;
 		}
+
+		const catchLine = document.lineAt(lastLine + 2);
+		const logLine = document.lineAt(lastLine + 3);
+
+		const catchIndex = catchLine.text.indexOf('error');
+		const logIndex = logLine.text.indexOf('error)');
+
+		editor.selections = [
+			new vscode.Selection(
+				catchLine.lineNumber, catchIndex,
+				catchLine.lineNumber, catchIndex + 5
+			),
+			new vscode.Selection(
+				logLine.lineNumber, logIndex,
+				logLine.lineNumber, logIndex + 5
+			)
+		];
 	});
 
 	context.subscriptions.push(disposable);
