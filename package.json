@@ -1,7 +1,7 @@
 {
-  "name": "helloworld",
-  "displayName": "HelloWorld",
-  "description": "",
+  "name": "trycatch-helper",
+  "displayName": "TryCatch Helper",
+  "description": "Wrap selected code in try/catch",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.140.0"
