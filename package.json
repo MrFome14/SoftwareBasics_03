@@ -2,6 +2,7 @@
   "name": "trycatch-helper",
   "displayName": "TryCatch Helper",
   "description": "Wrap selected code in try/catch",
+  "publisher": "mrfome14",
   "version": "0.0.1",
   "repository": {
     "type": "git",
