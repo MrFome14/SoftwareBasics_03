@@ -3,25 +3,25 @@ import * as vscode from 'vscode';
 function countSpaces(str: string): number {
 	let count = 0;
 	for (let i = 0; i < str.length; i++) {
-        if (str[i] === ' ') {
-            count++;
-        } else {
-            break;
-        }
-    }
-    return count;
+		if (str[i] === ' ') {
+			count++;
+		} else {
+			break;
+		}
+	}
+	return count;
 }
 
 function countTabs(str: string): number {
 	let count = 0;
 	for (let i = 0; i < str.length; i++) {
-        if (str[i] === '\t') {
-            count++;
-        } else {
-            break;
-        }
-    }
-    return count;
+		if (str[i] === '\t') {
+			count++;
+		} else {
+			break;
+		}
+	}
+	return count;
 }
 
 export function activate(context: vscode.ExtensionContext) {
@@ -74,7 +74,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 		const text = document.getText(selectedRagle);
 		const styledText = text.split('\n').map(line => indent + line).join('\n');
-		const wrappedText = `${frontGap}try {\n${styledText}\n} ${frontGap}catch (error) {\n${frontGap + indent}console.error(error);\n${frontGap}}`
+		const wrappedText = `${frontGap}try {\n${styledText}\n${frontGap}} catch (error) {\n${frontGap + indent}console.error(error);\n${frontGap}}`
 
 		try {
 			const success = await editor.edit((editBuilder) => {
