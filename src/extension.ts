@@ -1,7 +1,31 @@
 import * as vscode from 'vscode';
 
+function countSpaces(str: string): number {
+	let count = 0;
+	for (let i = 0; i < str.length; i++) {
+        if (str[i] === ' ') {
+            count++;
+        } else {
+            break;
+        }
+    }
+    return count;
+}
+
+function countTabs(str: string): number {
+	let count = 0;
+	for (let i = 0; i < str.length; i++) {
+        if (str[i] === '\t') {
+            count++;
+        } else {
+            break;
+        }
+    }
+    return count;
+}
+
 export function activate(context: vscode.ExtensionContext) {
-	console.log('Initialising TODO extension.');
+	console.log('Initialising try/catch extension');
 
 	const disposable = vscode.commands.registerCommand('tryCatchHelper.wrapSelection', async () => {
 		const editor = vscode.window.activeTextEditor;
@@ -20,7 +44,13 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 
 		const firstLine = selected.start.line;
+		const firstLineText = document.lineAt(firstLine).text;
+		const initialIndent = firstLineText.match(/^[ \t]*/)?.[0] ?? '';
 		let lastLine = selected.end.line;
+		let frontSpaces = countSpaces(firstLineText);
+		let frontTabs = countTabs(firstLineText);
+		let frontGap = ' '.repeat(frontSpaces) + '\t'.repeat(frontTabs);
+
 
 		if (selected.end.character === 0 && lastLine > firstLine) {
 			--lastLine;
@@ -44,7 +74,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 		const text = document.getText(selectedRagle);
 		const styledText = text.split('\n').map(line => indent + line).join('\n');
-		const wrappedText = `try {\n${styledText}\n} catch (error) {\n${indent}console.error(error);\n}`
+		const wrappedText = `${frontGap}try {\n${styledText}\n} ${frontGap}catch (error) {\n${frontGap + indent}console.error(error);\n${frontGap}}`
 
 		try {
 			const success = await editor.edit((editBuilder) => {
