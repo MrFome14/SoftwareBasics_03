@@ -50,6 +50,7 @@ flowchart TD
 ```
 
 
+
 Для взаимодействия с редактором используются объекты `TextEditor`, `TextDocument`, `Selection` и метод `editor.edit()`. Команда и её горячая клавиша объявляются в `package.json`.
 
 ## 4. Ограничения
